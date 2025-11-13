@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Title Updated -->
+    <title>My one and onlyyyy favorite babyyyyyy 😘</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        /* Use the Inter font */
+        body {
+            font-family: "Inter", sans-serif;
+            /* Allow scrolling */
+            overflow-x: hidden;
+        }
+
+        /* Container for the background collage */
+        #background-collage {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 4px;
+            filter: blur(12px);
+            transform: scale(1.1);
+            opacity: 0.7;
+        }
+
+        #background-collage img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Container for the 3D scene */
+        #scene-container {
+            position: fixed;
+            inset: 0;
+            z-index: 10;
+            background: transparent;
+        }
+
+        /* Overlay for text content */
+        #content-overlay {
+            position: relative;
+            z-index: 20;
+            /* Disconnect mouse events from the text sections */
+            /* This allows the raycaster to "see" the 3D scene behind them */
+            pointer-events: none;
+        }
+        
+        /* Modal and buttons must be clickable */
+        #modal-overlay, #close-modal-btn {
+            pointer-events: auto;
+        }
+        
+        /* Common style for all text on the page */
+        .text-section {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; /* Each section is full screen */
+            text-align: center;
+            color: white;
+            font-weight: 900;
+            /* Added padding for long text */
+            padding: 0 2rem; 
+        }
+
+        .title-text {
+            font-size: 5rem;
+            text-shadow:
+                0 0 10px rgba(255, 255, 255, 0.7),
+                0 0 20px rgba(255, 255, 255, 0.7),
+                0 0 30px rgba(230, 0, 115, 0.7),
+                0 0 40px rgba(230, 0, 115, 0.7);
+            animation: pulse-glow 3s infinite alternate;
+        }
+        
+        .subtitle-text {
+            font-size: 3.5rem;
+             text-shadow:
+                0 0 8px rgba(255, 255, 255, 0.6),
+                0 0 15px rgba(255, 255, 255, 0.6),
+                0 0 25px rgba(0, 150, 255, 0.6),
+                0 0 35px rgba(0, 150, 255, 0.6);
+        }
+
+        /* Glow animation */
+        @keyframes pulse-glow {
+            from {
+                text-shadow:
+                    0 0 10px rgba(255, 255, 255, 0.7),
+                    0 0 20px rgba(255, 255, 255, 0.7),
+                    0 0 30px rgba(230, 0, 115, 0.7),
+                    0 0 40px rgba(230, 0, 115, 0.7);
+            }
+            to {
+                text-shadow:
+                    0 0 20px rgba(255, 255, 255, 1),
+                    0 0 30px rgba(255, 255, 255, 1),
+                    0 0 40px rgba(230, 0, 115, 1),
+                    0 0 70px rgba(230, 0, 115, 1);
+            }
+        }
+    </style>
+</head>
+<body class="bg-black">
+
+    <!-- 1. Modal Popup -->
+    <div id="modal-overlay" class="fixed inset-0 z-50 bg-black/80 flex justify-center items-center">
+        <div id="modal-box" class="bg-white p-8 rounded-lg shadow-2xl text-center max-w-md w-11/12 relative z-60">
+            <!-- Heart icon -->
+            <svg class="w-16 h-16 text-pink-500 mx-auto mb-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path></svg>
+            <!-- Text Updated -->
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">Oyee saruuuu bangaram ee surprise ne kosame 🤗</h2>
+            <!-- Paragraph removed and button updated -->
+            <button id="close-modal-btn" class="bg-pink-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-pink-700 transition-all cursor-pointer">
+                open chey nanna 💝
+            </button>
+        </div>
+    </div>
+
+    <!-- 2. Background Collage -->
+    <div id="background-collage">
+        <!-- Placeholder images (same as before) -->
+        <img src="https://placehold.co/400x400/E0BBE4/000?text=Image+1" alt="Placeholder Image 1">
+        <img src="https://placehold.co/400x400/957DAD/fff?text=Image+2" alt="Placeholder Image 2">
+        <img src="https://placehold.co/400x400/D291BC/000?text=Image+3" alt="Placeholder Image 3">
+        <img src="https://placehold.co/400x400/FFC72C/fff?text=Image+4" alt="Placeholder Image 4">
+        <img src="https://placehold.co/400x400/E0BBE4/000?text=Image+5" alt="Placeholder Image 5">
+        <img src="https://placehold.co/400x400/957DAD/fff?text=Image+6" alt="Placeholder Image 6">
+        <img src="https://placehold.co/400x400/D291BC/000?text=Image+7" alt="Placeholder Image 7">
+        <img src="https://placehold.co/400x400/FFC72C/fff?text=Image+8" alt="Placeholder Image 8">
+    </div>
+
+    <!-- 3. 3D Scene Container -->
+    <div id="scene-container"></div>
+
+    <!-- 4. Text Content Overlay (Scrollable) -->
+    <div id="content-overlay">
+        <!-- Section 1: Main Title -->
+        <div class="text-section">
+            <!-- Text Updated -->
+            <h1 id="main-title" class="subtitle-text">you always have that special place in my heart coz ur the one who actually showed how beautiful love could be 😭💌</h1>
+        </div>
+        
+        <!-- Section 2: New Text -->
+        <div class="text-section">
+            <!-- Text Updated -->
+            <h2 class="subtitle-text">No matter what comes between us You'll be my constant forever that cannot be changed 🤌🏻</h2>
+        </div>
+        
+        <!-- Section 3: New Text -->
+        <div class="text-section">
+            <!-- Text Updated -->
+            <h2 class="subtitle-text">Last ga nen chepedhi enti ante You're my fav personnnnn in my life and It'll be same epati kuda ...nd one more thing is Ninu chala miss avtuna nanna 🙁🫠gatiga hug cheskovali ani undhi until i feel totally normal in ur safe arms😭</h2>
+        </div>
+        
+        <!-- Section 4: New Text -->
+        <div class="text-section">
+            <!-- New Section Added -->
+            <h2 class="subtitle-text">Sare this is the work I'm doing til'now and haha edho chesa anukokuuu </h2>
+        </div>
+
+        <!-- Section 5: New Text -->
+        <div class="text-section">
+            <!-- New Section Added -->
+            <h1 class="title-text">I LOVEEEE YOU SO MUCHHHHHHHHH 💞♾️</h1>
+        </div>
+    </div>
+
+    <!-- JavaScript for Modal and 3D Scene -->
+    <script type="module">
+        // --- Modal Logic ---
+        const modalOverlay = document.getElementById('modal-overlay');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+        const mainTitle = document.getElementById('main-title');
+
+        // Hide main title initially
+        mainTitle.style.visibility = 'hidden';
+
+        closeModalBtn.addEventListener('click', () => {
+            modalOverlay.style.display = 'none'; // Hide the modal
+            mainTitle.style.visibility = 'visible'; // Show the main title
+        });
+
+
+        // --- Three.js Logic ---
+        if (typeof THREE === 'undefined') {
+            console.error('three.js is not loaded!');
+        }
+
+        let scene, camera, renderer, raycaster, mouse, objectsGroup; // Added objectsGroup
+        const interactables = []; // Will hold both roses and hearts
+        let INTERSECTED;
+        const sceneContainer = document.getElementById('scene-container');
+        
+        // --- Materials ---
+        const roseMaterial = new THREE.MeshStandardMaterial({
+            color: 0xe60073, // Bright pink/red
+            roughness: 0.5,
+            metalness: 0.1,
+            emissive: 0x000000
+        });
+        
+        const stemMaterial = new THREE.MeshStandardMaterial({
+            color: 0x008000, // Green
+            roughness: 0.8,
+            metalness: 0.0
+        });
+        
+        const heartMaterial = new THREE.MeshStandardMaterial({
+            color: 0xff0055, // Bright red
+            roughness: 0.4,
+            metalness: 0.2,
+            emissive: 0x000000
+        });
+        
+        // --- Geometries ---
+        const budGeometry = new THREE.IcosahedronGeometry(0.5, 0); 
+        const stemGeometry = new THREE.CylinderGeometry(0.1, 0.1, 1.5, 8);
+        
+        // --- Helper Function to Create a Rose ---
+        function createRose() {
+            const group = new THREE.Group();
+            const bud = new THREE.Mesh(budGeometry, roseMaterial.clone());
+            bud.position.y = 0.75; 
+            bud.castShadow = true;
+            group.add(bud);
+
+            const stem = new THREE.Mesh(stemGeometry, stemMaterial);
+            stem.castShadow = true;
+            group.add(stem);
+
+            setRandomTransform(group);
+            return group;
+        }
+
+        // --- Helper Function to Create a Heart ---
+        function createHeart() {
+            const shape = new THREE.Shape();
+            const x = -0.5, y = -0.7; // Center the heart shape
+            shape.moveTo(x + 0.5, y + 0.5);
+            shape.bezierCurveTo(x + 0.5, y + 0.5, x + 0.4, y, x, y);
+            shape.bezierCurveTo(x - 0.6, y, x - 0.6, y + 0.7,x - 0.6, y + 0.7);
+            shape.bezierCurveTo(x - 0.6, y + 1.1, x - 0.3, y + 1.54, x + 0.5, y + 1.9);
+            shape.bezierCurveTo(x + 1.3, y + 1.54, x + 1.6, y + 1.1, x + 1.6, y + 0.7);
+            shape.bezierCurveTo(x + 1.6, y + 0.7, x + 1.6, y, x + 1.0, y);
+            shape.bezierCurveTo(x + 0.7, y, x + 0.5, y + 0.5, x + 0.5, y + 0.5);
+
+            const extrudeSettings = {
+                depth: 0.2,
+                bevelEnabled: true,
+                bevelThickness: 0.1,
+                bevelSize: 0.1,
+                bevelSegments: 2
+            };
+
+            const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
+            const mesh = new THREE.Mesh(geometry, heartMaterial.clone());
+            mesh.castShadow = true;
+            
+            const group = new THREE.Group();
+            group.add(mesh);
+            group.scale.set(0.5, 0.5, 0.5); // Scale hearts to be similar to roses
+
+            setRandomTransform(group);
+            return group;
+        }
+        
+        // --- Helper to set position, rotation, and velocity ---
+        function setRandomTransform(obj) {
+             // Set initial random position
+            obj.position.set(
+                (Math.random() - 0.5) * 20,
+                (Math.random() - 0.5) * 20,
+                (Math.random() - 0.5) * 20
+            );
+
+            // Set initial random rotation
+            obj.rotation.set(
+                Math.random() * Math.PI * 2,
+                Math.random() * Math.PI * 2,
+                Math.random() * Math.PI * 2
+            );
+
+            // Store a random velocity for movement
+            obj.userData.velocity = new THREE.Vector3(
+                (Math.random() - 0.5) * 0.01,
+                (Math.random() - 0.5) * 0.01,
+                (Math.random() - 0.5) * 0.01
+            );
+            
+            // Store a random rotation speed
+            obj.userData.rotationSpeed = new THREE.Vector3(
+                (Math.random() - 0.5) * 0.01,
+                (Math.random() - 0.5) * 0.01,
+                (Math.random() - 0.5) * 0.01
+            );
+        }
+
+        // --- Initialization ---
+        function init() {
+            scene = new THREE.Scene();
+            objectsGroup = new THREE.Group(); // Create a group to hold all interactable objects
+            scene.add(objectsGroup); // Add the group to the scene
+
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 15;
+
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.shadowMap.enabled = true;
+            sceneContainer.appendChild(renderer.domElement);
+
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+            scene.add(ambientLight);
+            
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+            directionalLight.position.set(5, 10, 7.5);
+            directionalLight.castShadow = true;
+            scene.add(directionalLight);
+
+            raycaster = new THREE.Raycaster();
+            mouse = new THREE.Vector2();
+
+            // Create Roses
+            for (let i = 0; i < 75; i++) {
+                const rose = createRose();
+                objectsGroup.add(rose); // Add rose to the group
+                interactables.push(rose);
+            }
+            
+            // Create Hearts
+            for (let i = 0; i < 50; i++) {
+                const heart = createHeart();
+                objectsGroup.add(heart); // Add heart to the group
+                interactables.push(heart);
+            }
+
+            window.addEventListener('resize', onWindowResize);
+            document.addEventListener('mousemove', onMouseMove);
+            window.addEventListener('scroll', onScroll); // Add scroll listener
+        }
+
+        // --- Event Handlers ---
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        function onMouseMove(event) {
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+        }
+
+        function onScroll() {
+            // Calculate scroll percentage
+            const scrollPercent = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);
+            
+            // Animate camera based on scroll
+            const cameraY = -scrollPercent * 10; // Get target Y position
+            camera.position.z = 15 - (scrollPercent * 10); // Move camera closer
+            camera.position.y = cameraY;     // Move camera "down"
+            camera.rotation.x = -scrollPercent * 0.5;    // Tilt camera
+
+            // Make the entire swarm of objects follow the camera's Y position
+            // This ensures the particles are always in view while scrolling
+            objectsGroup.position.y = cameraY;
+        }
+
+        // --- Animation Loop ---
+        function animate() {
+            requestAnimationFrame(animate);
+
+            const boundingBox = 15; // This is now a "soft" boundary radius
+
+            // Animate Roses and Hearts
+            interactables.forEach(obj => {
+                obj.position.add(obj.userData.velocity);
+                obj.rotation.x += obj.userData.rotationSpeed.x;
+                obj.rotation.y += obj.userData.rotationSpeed.y;
+                obj.rotation.z += obj.userData.rotationSpeed.z;
+
+                // --- NEW "Smooth Flow" Logic ---
+                // We are in the objectsGroup's local space, so center is (0,0,0)
+                const distance = obj.position.length();
+                
+                if (distance > boundingBox) {
+                    // If outside the soft boundary, add a gentle force pulling it back to the center.
+                    // The force is stronger the farther it is.
+                    const pullStrength = -0.001;
+                    obj.userData.velocity.add(obj.position.clone().multiplyScalar(pullStrength * (distance - boundingBox)));
+                }
+
+                // Apply a very small amount of damping so they don't accelerate forever
+                obj.userData.velocity.multiplyScalar(0.998);
+
+                // Clamp velocity to a max speed to prevent chaos
+                const maxSpeed = 0.03;
+                if (obj.userData.velocity.length() > maxSpeed) {
+                    obj.userData.velocity.normalize().multiplyScalar(maxSpeed);
+                }
+                // --- End of new logic ---
+
+                // --- OLD Wrap around logic (REMOVED) ---
+                // if (obj.position.x > boundingBox) obj.position.x = -boundingBox;
+                // ...
+                // if (obj.position.z < -boundingBox) obj.position.z = boundingBox;
+            });
+
+            // Handle Mouse Interaction
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(interactables, true);
+
+            if (intersects.length > 0) {
+                let intersectedObject = intersects[0].object;
+                while (intersectedObject.parent && !(intersectedObject.parent instanceof THREE.Scene)) {
+                    intersectedObject = intersectedObject.parent;
+                    if (intersectedObject.userData.velocity) { // Found our group
+                        break;
+                    }
+                }
+
+                if (INTERSECTED != intersectedObject) { 
+                    if (INTERSECTED) {
+                        INTERSECTED.scale.set(1, 1, 1);
+                        INTERSECTED.children[0].material.emissive.setHex(0x000000); 
+                    }
+
+                    INTERSECTED = intersectedObject;
+                    INTERSECTED.scale.set(1.5, 1.5, 1.5);
+                    
+                    // Apply glow based on material
+                    const material = INTERSECTED.children[0].material;
+                    if (material.color.getHex() === 0xe60073) { // Rose
+                        material.emissive.setHex(0xff0000); 
+                    } else if (material.color.getHex() === 0xff0055) { // Heart
+                        material.emissive.setHex(0xff66aa);
+                    }
+                }
+            } else {
+                if (INTERSECTED) {
+                    INTERSECTED.scale.set(1, 1, 1);
+                    INTERSECTED.children[0].material.emissive.setHex(0x000000);
+                }
+                INTERSECTED = null;
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        // Start
+        init();
+        animate();
+    </script>Full
+</body>
+</html>
